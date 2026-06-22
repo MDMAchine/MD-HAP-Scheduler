@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md-hap-scheduler"
+version = "1.0.0"
+description = "Hamiltonian Action-Principle sigma scheduler for flow-matching diffusion models."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0-or-later" }
+authors = [
+    { name = "Alexander Allan (MDMAchine)", email = "aallan@aeconcepts.net" },
+]
+keywords = ["diffusion", "comfyui", "scheduler", "sigma", "hamiltonian", "ace-step"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Multimedia :: Sound/Audio",
+]
+
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.5.0",
+    "Pillow>=9.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/MDMAchine/md-hap-scheduler"
+Issues   = "https://github.com/MDMAchine/md-hap-scheduler/issues"
