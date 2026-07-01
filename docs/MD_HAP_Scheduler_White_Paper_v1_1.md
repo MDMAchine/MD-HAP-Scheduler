@@ -1,26 +1,33 @@
 # HAP: Hamiltonian Action-Principle Sigma Scheduling for Flow-Matching Diffusion Models
 
 **Alexander Allan (MDMAchine)**  
-A&E Concepts  
-aallan@aeconcepts.net
+A&E Concepts, New Bedford MA  
 
-*Preprint — June 2026*
+**Version:** v1.1, Pre-print  
+**Date:** July 2026  
+**arXiv target:** cs.SD (Sound), cross-list cs.LG  
+**Supersedes:** v1.0
+
+*IP Notice: This paper describes HAP (Hamiltonian Action-Principle), a sigma scheduler
+released under GPL v3. All mathematics and implementation details in this paper are
+clean-room and intended for public distribution. © 2026 Alexander Allan / A&E Concepts.
+All rights reserved.*
 
 ---
 
 ## Abstract
 
-We present HAP (Hamiltonian Action-Principle), a physics-derived sigma scheduler for flow-matching audio diffusion models. Standard schedulers distribute denoising steps according to fixed mathematical curves that treat all regions of the sigma trajectory as equivalent. HAP instead derives step sizes from a particle-in-potential-well simulation: a particle falls through a gravitational well under atmospheric drag, and its velocity curve is integrated and normalized to produce a sigma schedule. The governing equation `v(t) = (1 + ω·t) · exp(−γ·t)` exposes two orthogonal control parameters — kinetic energy (ω) and damping friction (γ) — that independently reshape the budget distribution across the structure-formation and detail-crystallization zones of the denoising trajectory. We prove monotonicity, derive the closed-form integral, and characterize parameter behavior analytically. HAP ships as a ComfyUI node, a C++17 header, and a HOT-Step-CPP Lua plugin, and is the scheduler component of the MD inference stack alongside the STORM adaptive sampler.
+We present HAP (Hamiltonian Action-Principle), a physics-derived sigma scheduler for flow-matching audio diffusion models. Standard schedulers distribute denoising steps according to fixed mathematical curves that treat all regions of the sigma trajectory as equivalent. HAP instead derives step sizes from a particle-in-potential-well simulation: a particle falls through a gravitational well under atmospheric drag, and its velocity curve is integrated and normalized to produce a sigma schedule. The governing equation `v(t) = (1 + ω·t) · exp(−γ·t)` exposes two orthogonal control parameters, kinetic energy (ω) and damping friction (γ), that independently reshape the budget distribution across the structure-formation and detail-crystallization zones of the denoising trajectory. We prove monotonicity, derive the closed-form integral, and characterize parameter behavior analytically. HAP ships as a ComfyUI node, a C++17 header, and a HOT-Step-CPP Lua plugin, and is the scheduler component of the MD inference stack alongside the STORM adaptive sampler.
 
 ---
 
 ## 1. Introduction
 
-Sigma scheduling is the problem of allocating a finite number of denoising steps across the noise level trajectory from σ_max to σ_min. For flow-matching models operating on probability flow ODEs — such as ACE-Step — the choice of schedule directly governs how much computational budget is spent in each region of the denoising process: the high-sigma zone where coarse musical structure forms, the mid-sigma zone where harmonic content and tonal identity crystallize, and the low-sigma zone where fine grain and residual detail are refined.
+Sigma scheduling is the problem of allocating a finite number of denoising steps across the noise level trajectory from σ_max to σ_min. For flow-matching models operating on probability flow ODEs, such as ACE-Step, the choice of schedule directly governs how much computational budget is spent in each region of the denoising process: the high-sigma zone where coarse musical structure forms, the mid-sigma zone where harmonic content and tonal identity crystallize, and the low-sigma zone where fine grain and residual detail are refined.
 
 Standard schedulers address this with fixed mathematical curves. **Linear** spacing distributes steps uniformly, allocating identical budget regardless of local trajectory curvature. **Cosine** schedules concentrate steps near both endpoints, motivated by perceptual logarithmic models of noise. The **Karras et al. (2022)** schedule uses a power-function rho mapping that emphasizes both extremes and sparsifies the mid-region. None of these were derived with flow-matching models or audio diffusion specifically in mind.
 
-HAP takes a different approach: it frames sigma scheduling as the trajectory of a physical system and derives step sizes from first principles. The potential well metaphor is not merely illustrative — the physical dynamics directly encode the inductive bias we want. A particle accelerating through a well and decelerating under drag naturally produces a schedule with large early steps (rapid coarse-structure coverage), a controlled mid-zone budget (harmonic content formation), and compressed end steps (detail crystallization). Two parameters control the shape with near-orthogonal effect.
+HAP takes a different approach: it frames sigma scheduling as the trajectory of a physical system and derives step sizes from first principles. The potential well metaphor is not merely illustrative, the physical dynamics directly encode the inductive bias we want. A particle accelerating through a well and decelerating under drag naturally produces a schedule with large early steps (rapid coarse-structure coverage), a controlled mid-zone budget (harmonic content formation), and compressed end steps (detail crystallization). Two parameters control the shape with near-orthogonal effect.
 
 HAP is designed as a component, not a standalone system. It pairs directly with the STORM adaptive sampler, which handles per-step trajectory correction and stiffness detection. HAP allocates the budget; STORM spends it efficiently. Together they constitute the MD inference stack for ACE-Step audio diffusion.
 
@@ -36,7 +43,7 @@ Flow-matching models learn a velocity field that transports samples from a noise
 dx = v_θ(x, σ) dσ
 ```
 
-where v_θ is the learned velocity field and σ is the noise level. Unlike DDPM models, the probability flow ODE is deterministic — there is no stochastic noise injection in the ideal formulation. This has implications for scheduling: the latent stays on the ODE manifold throughout denoising, and step size determines how far along the manifold each step travels.
+where v_θ is the learned velocity field and σ is the noise level. Unlike DDPM models, the probability flow ODE is deterministic, there is no stochastic noise injection in the ideal formulation. This has implications for scheduling: the latent stays on the ODE manifold throughout denoising, and step size determines how far along the manifold each step travels.
 
 ACE-Step (2.6B and XL 4B) is a flow-matching transformer trained for audio generation. It operates with σ_max ≈ 14.6146 and σ_min ≈ 0.0292 under its default configuration.
 
@@ -54,7 +61,7 @@ None of these schedules expose physically interpretable parameters for controlli
 
 In classical mechanics, the Hamiltonian H(q, p) describes the total energy of a system as a function of position q and momentum p. The action principle states that the physical trajectory minimizes the action functional S = ∫L dt, where L = T − V is the Lagrangian (kinetic minus potential energy).
 
-HAP uses this framework as an inductive prior: we want a velocity schedule that follows the dynamics of a particle falling through a gravitational potential well with atmospheric drag. The resulting velocity function naturally encodes the desired budget distribution — the particle accelerates under gravity (spending more time in the mid-well, analogous to more steps in the mid-sigma zone) and decelerates under drag (slowing at the bottom, analogous to compressed steps in the detail zone).
+HAP uses this framework as an inductive prior: we want a velocity schedule that follows the dynamics of a particle falling through a gravitational potential well with atmospheric drag. The resulting velocity function naturally encodes the desired budget distribution, the particle accelerates under gravity (spending more time in the mid-well, analogous to more steps in the mid-sigma zone) and decelerates under drag (slowing at the bottom, analogous to compressed steps in the detail zone).
 
 ---
 
@@ -79,17 +86,17 @@ The product of these two terms creates a velocity profile that starts at v(0) = 
 
 The sigma schedule is derived by integrating the velocity function:
 
-**Step 1 — Time vector:** Sample t uniformly, t_i = i/(N−1) for i = 0, …, N−1.
+**Step 1, Time vector:** Sample t uniformly, t_i = i/(N−1) for i = 0, …, N−1.
 
-**Step 2 — Velocity:** Compute v_i = clamp((1 + ω·t_i)·exp(−γ·t_i), ε).
+**Step 2, Velocity:** Compute v_i = clamp((1 + ω·t_i)·exp(−γ·t_i), ε).
 
-**Step 3 — Cumulative distance:** d_0 = 0, d_{i+1} = d_i + v_i.
+**Step 3, Cumulative distance:** d_0 = 0, d_{i+1} = d_i + v_i.
 
-**Step 4 — Normalize:** d_norm_i = d_i / d_N. This maps distance to [0, 1].
+**Step 4, Normalize:** d_norm_i = d_i / d_N. This maps distance to [0, 1].
 
-**Step 5 — Map to sigma space:** σ_i = σ_min + (σ_max − σ_min)·(1 − d_norm_i).
+**Step 5, Map to sigma space:** σ_i = σ_min + (σ_max − σ_min)·(1 − d_norm_i).
 
-**Step 6 — Enforce endpoints:** σ_0 = σ_max, σ_N = σ_min (or 0.0 if σ_min = 0).
+**Step 6, Enforce endpoints:** σ_0 = σ_max, σ_N = σ_min (or 0.0 if σ_min = 0).
 
 The output tensor has length N+1, following the ComfyUI convention where the final element is the terminal sigma.
 
@@ -113,7 +120,7 @@ The limiting case γ → 0 (L'Hôpital):
 D(ω, 0) = 1 + ω/2
 ```
 
-This confirms that ω=0, γ=0 gives D=1 and uniform normalization — identical to linear spacing.
+This confirms that ω=0, γ=0 gives D=1 and uniform normalization, identical to linear spacing.
 
 ### 3.4 Step Size Distribution
 
@@ -207,7 +214,7 @@ Linear spacing allocates equal step sizes across the entire sigma range. HAP wit
 
 ### 5.2 Karras et al.
 
-The Karras schedule with ρ=7 concentrates steps at **both** endpoints (high σ and low σ) and sparsifies the mid-run. HAP with default parameters concentrates steps at the **start** and compresses them toward the end, but does not re-concentrate at the very start in the same way — it is monotone throughout. The fundamental difference is that Karras was derived for score-based EDM models where both ends of the trajectory are perceptually important; HAP is motivated by the flow-matching case where the high-sigma structural zone is the primary concern.
+The Karras schedule with ρ=7 concentrates steps at **both** endpoints (high σ and low σ) and sparsifies the mid-run. HAP with default parameters concentrates steps at the **start** and compresses them toward the end, but does not re-concentrate at the very start in the same way, it is monotone throughout. The fundamental difference is that Karras was derived for score-based EDM models where both ends of the trajectory are perceptually important; HAP is motivated by the flow-matching case where the high-sigma structural zone is the primary concern.
 
 ### 5.3 Cosine
 
@@ -217,9 +224,9 @@ Cosine schedules are symmetric around the midpoint in angular space. HAP is expl
 
 | Schedule | Endpoint control | Mid-run tunable | Derived for flow-matching | Physical interpretation |
 |---|---|---|---|---|
-| Linear | — | — | — | — |
-| Cosine | Symmetric | — | — | Perceptual model |
-| Karras | Both ends | — | — | Score-based EDM |
+| Linear |, |, |, |, |
+| Cosine | Symmetric |, |, | Perceptual model |
+| Karras | Both ends |, |, | Score-based EDM |
 | **HAP** | **Start + End independently** | **Yes (ω, γ)** | **Yes** | **Particle mechanics** |
 
 ---
@@ -273,8 +280,8 @@ The division of responsibility is clean:
 
 | Component | Role |
 |---|---|
-| **HAP** | Budget allocation — *where* to concentrate computational steps across the sigma trajectory |
-| **STORM** | Trajectory correction — *how* to traverse each step, with stiffness-adaptive solver dispatch, SNR-adaptive look-back smoothing, and velocity-aligned SDE restarts |
+| **HAP** | Budget allocation, *where* to concentrate computational steps across the sigma trajectory |
+| **STORM** | Trajectory correction, *how* to traverse each step, with stiffness-adaptive solver dispatch, SNR-adaptive look-back smoothing, and velocity-aligned SDE restarts |
 
 Neither component depends on the other at the API level. HAP outputs a standard sigma tensor that any ComfyUI-compatible sampler can consume. STORM accepts any sigma schedule as input. But the two are complementary by design: STORM's look-back smoother applies SNR-adaptive weighting that is most effective when early steps (high σ) have the larger budget that HAP provides.
 
@@ -312,7 +319,7 @@ For 35-step schedules: HAP (ω=2.0, γ=2.5) + STORM (look_back_lambda=0.35, look
 
 ### 8.3 Lua (HOT-Step-CPP)
 
-`hotstep/md_hap.lua` implements the scheduler as a HOT-Step solver plugin. It normalizes sigma to [0, 1] following HOT-Step convention and applies the host's shift warp after the well computation. The shift warp does not alter the relative step distribution — only the absolute sigma values that the host maps from the normalized schedule.
+`hotstep/md_hap.lua` implements the scheduler as a HOT-Step solver plugin. It normalizes sigma to [0, 1] following HOT-Step convention and applies the host's shift warp after the well computation. The shift warp does not alter the relative step distribution, only the absolute sigma values that the host maps from the normalized schedule.
 
 ---
 
@@ -340,9 +347,11 @@ The author thanks **scragnog** (HOT-Step-CPP) for same-day HOT-Step integration,
 
 4. ACE-Step: [cite ACE-Step paper when available].
 
-5. Allan, A. (MDMAchine). (2026). STORM: Stabilized Taylor Oscillation with Runge-Kutta Memory — An Adaptive Stiffness-Switching ODE Sampler for Flow-Matching Diffusion Models. *A&E Concepts preprint*.
+5. Allan, A. (MDMAchine). (2026). STORM: Stabilized Taylor Oscillation with Runge-Kutta Memory, An Adaptive Stiffness-Switching ODE Sampler for Flow-Matching Diffusion Models. *A&E Concepts preprint*.
 
 ---
 
-*© 2026 Alexander Allan (MDMAchine) · A&E Concepts · Patent Pending*  
-*GPL v3 — Free for open-source use. Commercial closed-source: contact A&E Concepts.*
+*© 2026 Alexander Allan (MDMAchine) · A&E Concepts*  
+*All Rights Reserved*  
+*GPL v3, Free for open-source use. Commercial closed-source: contact A&E Concepts.*  
+*Version 1.1, July 2026*

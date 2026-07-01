@@ -175,7 +175,7 @@ Already merged into HOT-Step-CPP master as `md_hap.lua`. To use standalone:
 | `pyproject.toml` | Package metadata and dependencies |
 | `requirements.txt` | pip fallback |
 | `assets/header_animated.svg` | Animated repo header |
-| `docs/HAP_White_Paper_v1.md` | Technical white paper |
+| `docs/MD_HAP_Scheduler_White_Paper_v1_1.md` | Technical white paper |
 
 ---
 
@@ -197,7 +197,7 @@ Commercial closed-source integration requires a dual-license commercial exemptio
 
 Full technical treatment of the Hamiltonian action-principle scheduler, potential well mechanics, and validated parameter ranges:
 
-[`docs/HAP_White_Paper_v1.md`](docs/HAP_White_Paper_v1.md)
+[`docs/MD_HAP_Scheduler_White_Paper_v1_1.md`](docs/MD_HAP_Scheduler_White_Paper_v1_1.md)
 
 ---
 
