@@ -175,6 +175,7 @@ Already merged into HOT-Step-CPP master as `md_hap.lua`. To use standalone:
 | `pyproject.toml` | Package metadata and dependencies |
 | `requirements.txt` | pip fallback |
 | `assets/header_animated.svg` | Animated repo header |
+| `docs/HAP_White_Paper_v1.md` | arXiv pre-print |
 
 ---
 
@@ -196,7 +197,7 @@ Commercial closed-source integration requires a dual-license commercial exemptio
 
 Pre-print: *"HAP: Hamiltonian Action-Principle Sigma Scheduling for Flow-Matching Diffusion Models"*
 
-Alexander Allan (MDMAchine), AComing Soon!E Concepts
+Alexander Allan (MDMAchine), A&E Concepts
 
 **arXiv link — Coming Soon!**
 
