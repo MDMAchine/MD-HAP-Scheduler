@@ -23,16 +23,3 @@ output/
 *.rar
 *.zip
 *.7z
-
-# Internal / private
-*_Internal_Reference.md
-*_REPO_INVENTORY.md
-nag_core.py
-omni_scan_root.py
-root_snapshot.txt
-scan_repo.py
-bak/
-baks/
-
-# Compiled binary core (distributed separately)
-hap_scheduler_core_bin*
