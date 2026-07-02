@@ -102,7 +102,7 @@ class MD_HAPScheduler:
                 "steps":            ("INT",   {"default": 20,      "min": 1,   "max": 1000}),
                 "damping_friction": ("FLOAT", {"default": 3.0,     "min": 0.0, "max": 10.0, "step": 0.1}),
                 "kinetic_energy":   ("FLOAT", {"default": 1.5,     "min": 0.0, "max": 10.0, "step": 0.1}),
-                "sigma_max":        ("FLOAT", {"default": 14.6146, "min": 0.1, "max": 1000.0, "step": 0.1}),
+                "sigma_max":        ("FLOAT", {"default": 1.0, "min": 0.1, "max": 1000.0, "step": 0.1}),
                 "sigma_min":        ("FLOAT", {"default": 0.0292,  "min": 0.0, "max": 10.0,  "step": 0.0001}),
                 "debug_mode":       (["0 - Silent", "1 - Info", "2 - Verbose"], {"default": "1 - Info"}),
                 "enable_profiling": ("BOOLEAN", {"default": False}),
