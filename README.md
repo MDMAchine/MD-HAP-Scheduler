@@ -69,7 +69,7 @@ When `ω = 0, γ = 0`, velocity is constant, identical to linear spacing. As `ω
 | `steps` | 20 | 1 to 1000 | Number of denoising steps. |
 | `kinetic_energy` ω | 1.5 | 0.0 to 10.0 | Initial velocity boost. Higher = more steps in the structure zone. |
 | `damping_friction` γ | 3.0 | 0.0 to 10.0 | Atmospheric drag. Higher = more steps compressed at the detail end. |
-| `sigma_max` | 14.6146 | 0.1 to 1000.0 | ACE-Step XL default. Top of the potential well. |
+| `sigma_max` | 1.0 | 0.1 to 1000.0 | ACE-Step XL default. Top of the potential well. |
 | `sigma_min` | 0.0292 | 0.0 to 10.0 | ACE-Step XL default. Bottom of the well. |
 | `debug_mode` | 1 - Info | 0/1/2 | 0 = silent, 1 = analytics report, 2 = verbose. |
 | `enable_profiling` | False | bool | Per-op timing. Implied enabled at debug ≥ 1. |
