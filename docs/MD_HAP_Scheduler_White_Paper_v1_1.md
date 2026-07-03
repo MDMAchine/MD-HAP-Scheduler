@@ -45,7 +45,7 @@ dx = v_θ(x, σ) dσ
 
 where v_θ is the learned velocity field and σ is the noise level. Unlike DDPM models, the probability flow ODE is deterministic, there is no stochastic noise injection in the ideal formulation. This has implications for scheduling: the latent stays on the ODE manifold throughout denoising, and step size determines how far along the manifold each step travels.
 
-ACE-Step (2.6B and XL 4B) is a flow-matching transformer trained for audio generation. It operates with σ_max ≈ 14.6146 and σ_min ≈ 0.0292 under its default configuration.
+ACE-Step (2.6B and XL 4B) is a flow-matching transformer trained for audio generation. It operates with σ_max ≈ 1.0 and σ_min ≈ 0.0292 under its default configuration.
 
 ### 2.2 Existing Sigma Schedules
 
@@ -62,6 +62,8 @@ None of these schedules expose physically interpretable parameters for controlli
 In classical mechanics, the Hamiltonian H(q, p) describes the total energy of a system as a function of position q and momentum p. The action principle states that the physical trajectory minimizes the action functional S = ∫L dt, where L = T − V is the Lagrangian (kinetic minus potential energy).
 
 HAP uses this framework as an inductive prior: we want a velocity schedule that follows the dynamics of a particle falling through a gravitational potential well with atmospheric drag. The resulting velocity function naturally encodes the desired budget distribution, the particle accelerates under gravity (spending more time in the mid-well, analogous to more steps in the mid-sigma zone) and decelerates under drag (slowing at the bottom, analogous to compressed steps in the detail zone).
+
+**A note on naming.** HAP is Hamiltonian-inspired rather than a strict Hamiltonian derivation: v(t) is not obtained by solving a specified H(q, p) and there is no conserved quantity being tracked. The name refers to the physical intuition motivating the velocity profile, a particle in a potential well under drag, not to a formal action-principle derivation. Section 3 characterizes v(t) directly and analytically; nothing downstream depends on the Hamiltonian framing being more than a naming convention.
 
 ---
 
@@ -224,10 +226,14 @@ Cosine schedules are symmetric around the midpoint in angular space. HAP is expl
 
 | Schedule | Endpoint control | Mid-run tunable | Derived for flow-matching | Physical interpretation |
 |---|---|---|---|---|
-| Linear |, |, |, |, |
-| Cosine | Symmetric |, |, | Perceptual model |
-| Karras | Both ends |, |, | Score-based EDM |
+| Linear | n/a | n/a | n/a | n/a |
+| Cosine | Symmetric | n/a | n/a | Perceptual model |
+| Karras | Both ends | n/a | n/a | Score-based EDM |
 | **HAP** | **Start + End independently** | **Yes (ω, γ)** | **Yes** | **Particle mechanics** |
+
+![HAP vs Linear/Cosine/Karras](../assets/schedule_comparison.png)
+
+**Figure 1.** Sigma trajectory comparison at 20 steps, σ_max=1.0, σ_min=0.0292 (left), and per-step budget allocation as a fraction of total sigma range (right). HAP with default parameters (ω=1.5, γ=3.0) front-loads budget into the early-to-mid trajectory and compresses late steps, in contrast to Karras which concentrates at both endpoints and cosine which sparsifies the middle. This figure is generated directly from the schedule equations in Sections 3-4 and requires no model inference or benchmark data.
 
 ---
 
@@ -235,7 +241,7 @@ Cosine schedules are symmetric around the midpoint in angular space. HAP is expl
 
 ### 6.1 Setup
 
-All evaluations use ACE-Step XL Turbo 4B with a 20-step schedule. Sigma range: σ_max = 14.6146, σ_min = 0.0292. Comparisons are made against linear, cosine, and karras (ρ=7) baselines at identical step counts and model configurations, with the STORM sampler held constant across all conditions.
+All evaluations use ACE-Step XL Turbo 4B with a 20-step schedule. Sigma range: σ_max = 1.0, σ_min = 0.0292. Comparisons are made against linear, cosine, and karras (ρ=7) baselines at identical step counts and model configurations, with the STORM sampler held constant across all conditions.
 
 ### 6.2 Perceptual Evaluation
 

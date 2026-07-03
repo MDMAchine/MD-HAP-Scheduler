@@ -6,6 +6,8 @@
 
 *Alexander Allan (MDMAchine) · A&E Concepts · GPL v3*
 
+> **Status:** Public reference implementation. Quantitative benchmarking (FAD, KLD, spectral metrics) is currently underway and will be added to the white paper and this README together once complete.
+
 ---
 
 ## What Is HAP?
@@ -18,7 +20,7 @@ The governing equation is:
 v(t) = (1 + ω·t) · e^(−γ·t)
 ```
 
-`ω` (kinetic energy) gives the particle an initial boost, stretching steps in the **mid-sigma zone** where harmonic structure and musical content form. `γ` (damping friction) simulates atmospheric drag, compressing steps toward the **end** where fine grain crystallizes. The result is a schedule that allocates computational budget where the diffusion model actually does meaningful work, rather than treating all steps as equivalent.
+`ω` (kinetic energy) gives the particle an initial boost, stretching steps in the **mid-sigma zone** where harmonic structure and musical content form. `γ` (damping friction) simulates atmospheric drag, compressing steps toward the **end** where fine grain crystallizes. The result redistributes denoising steps toward the regions of the trajectory that empirically tend to dominate perceptual structure formation, rather than treating all steps as equivalent.
 
 **Validated on:** ACE-Step 2.6B, ACE-Step XL Turbo 4B  
 **Deployment:** ComfyUI node · C++ header-only · Lua plugin (HOT-Step)  
@@ -57,6 +59,10 @@ Input: steps, kinetic_energy (ω), damping_friction (γ), σ_max, σ_min
 ### Potential Well Mechanics
 
 When `ω = 0, γ = 0`, velocity is constant, identical to linear spacing. As `ω` increases, the velocity peak shifts into the mid-run, stretching the structure zone. As `γ` increases, velocity decays faster, compressing the late-run detail steps into a denser cluster. The two parameters are nearly orthogonal in their effect, making the schedule intuitive to tune.
+
+![HAP vs Linear/Cosine/Karras](assets/schedule_comparison.png)
+
+Left: sigma trajectories overlaid at 20 steps. Right: per-step budget share, HAP front-loads the structure zone while Karras concentrates at both endpoints and cosine sparsifies the middle.
 
 ---
 
@@ -141,7 +147,7 @@ auto result = md_hap::calculate_hap_sigmas(
     /*steps=*/   20,
     /*damping=*/ 3.0f,
     /*kinetic=*/ 1.5f,
-    /*sig_max=*/ 14.6146f,
+    /*sig_max=*/ 1.0f,
     /*sig_min=*/ 0.0292f
 );
 

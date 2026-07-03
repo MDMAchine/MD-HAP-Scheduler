@@ -17,9 +17,11 @@ Thumbs.db
 # ComfyUI output
 output/
 *.png
+!assets/*.png
 *.wav
 
 # Archives
 *.rar
 *.zip
 *.7z
+*.tar.gz

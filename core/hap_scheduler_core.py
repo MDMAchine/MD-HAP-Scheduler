@@ -90,7 +90,7 @@ if __name__ == "__main__":
     print("🧪 Running Self-Tests for HAP Core...")
 
     # Test 1: correct output length
-    s, log = calculate_hap_sigmas(20, 3.0, 1.5, 14.6146, 0.0292)
+    s, log = calculate_hap_sigmas(20, 3.0, 1.5, 1.0, 0.0292)
     assert len(s) == 21, f"Sigma tensor length mismatch: got {len(s)}"
 
     # Test 2: final sigma endpoint — use tolerance to account for float32 precision
@@ -99,11 +99,11 @@ if __name__ == "__main__":
         f"Final sigma mismatch: got {s[-1].item():.6f}, expected ~0.0292"
 
     # Test 3: first sigma is sigma_max exactly
-    assert s[0].item() == 14.6146, \
+    assert s[0].item() == 1.0, \
         f"Initial sigma mismatch: got {s[0].item()}"
 
     # Test 4: sigma_min=0.0 path produces exact zero endpoint
-    s_zero, _ = calculate_hap_sigmas(10, 3.0, 1.5, 14.6146, 0.0)
+    s_zero, _ = calculate_hap_sigmas(10, 3.0, 1.5, 1.0, 0.0)
     assert s_zero[-1].item() == 0.0, \
         f"Zero sigma_min path failed: got {s_zero[-1].item()}"
 
