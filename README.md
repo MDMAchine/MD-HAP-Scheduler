@@ -207,4 +207,4 @@ Full technical treatment of the Hamiltonian action-principle scheduler, potentia
 
 ---
 
-*© 2026 Alexander Allan (MDMAchine) · A&E Concepts · Patent Pending*
+*© 2026 Alexander Allan (MDMAchine) · A&E Concepts*
