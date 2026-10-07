@@ -6,7 +6,7 @@
 
 *Alexander Allan (MDMAchine) · A&E Concepts · GPL v3*
 
-> **Status:** Public reference implementation. Quantitative benchmarking (FAD, KLD, spectral metrics) is currently underway and will be added to the white paper and this README together once complete.
+> **Status:** Public reference implementation. No quantitative benchmarks (FAD, KLD, spectral metrics) have been published for this scheduler yet.
 
 ---
 

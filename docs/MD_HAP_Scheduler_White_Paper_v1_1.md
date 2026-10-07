@@ -253,7 +253,7 @@ All evaluations use ACE-Step XL Turbo 4B with a 20-step schedule. Sigma range: Ï
 | Structural Clarity | [DATA] | [DATA] | [DATA] | [DATA] |
 | Air | [DATA] | [DATA] | [DATA] | [DATA] |
 
-*[DATA: Perceptual evaluation results to be added prior to arXiv submission. Methodology: blind A/B rating by N evaluators on M generation pairs per condition, same prompt set.]*
+*No perceptual evaluation results have been published for this scheduler yet; the table above is an unfilled template. Intended methodology: blind A/B rating on matched generation pairs per condition, same prompt set.*
 
 ### 6.3 Objective Metrics
 
@@ -263,7 +263,7 @@ All evaluations use ACE-Step XL Turbo 4B with a 20-step schedule. Sigma range: Ï
 | KLD | [DATA] | [DATA] | [DATA] | [DATA] |
 | Spectral Flatness | [DATA] | [DATA] | [DATA] | [DATA] |
 
-*[DATA: Objective metrics to be added prior to submission. Evaluation set: [N] diverse genre prompts, 3 seeds per condition.]*
+*No objective metrics (FAD, KLD, spectral flatness) have been published for this scheduler yet; the table above is an unfilled template.*
 
 ### 6.4 Parameter Sensitivity
 
